@@ -1,129 +1,137 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VSA Analyzer — F1/F2 Only</title>
-<style>textarea{width:100%;min-height:150px;margin-top:12px;padding:12px;background:#07111f;color:var(--text);border:1px solid var(--line);border-radius:10px;font:13px/1.5 ui-monospace,SFMono-Regular,monospace;resize:vertical}textarea:focus{outline:2px solid #67e8f955;border-color:var(--cyan)}
-.privacy{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#102238;border:1px solid var(--line);color:#bcd0e8;font-size:11px;font-weight:800}.badge.ok{color:var(--good);border-color:#86efac44}.importhelp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.importhelp>div{background:#091321;border:1px solid var(--line);border-radius:10px;padding:11px}.progress{height:6px;background:#07111f;border-radius:99px;overflow:hidden;margin-top:10px}.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet));transition:width .2s}.graphlegend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:8px}.legendcorner{color:var(--violet);font-weight:800}.legendother{color:#91a4c0}
-
-:root{--bg:#06101c;--card:#0d1929;--line:#263852;--text:#edf5ff;--muted:#91a4c0;--cyan:#67e8f9;--violet:#a78bfa;--good:#86efac}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#122440 0,#06101c 55%);color:var(--text);font-family:Inter,system-ui,sans-serif}main{max-width:1450px;margin:auto;padding:28px}
-header{margin-bottom:20px}h1{font-size:32px;margin:0 0 7px}.sub{color:var(--muted);max-width:900px}.card{background:#0d1929ee;border:1px solid var(--line);border-radius:18px;padding:19px;margin-bottom:18px;box-shadow:0 14px 45px #0006}h2{font-size:19px;margin:0 0 7px}.note{font-size:12px;color:var(--muted);line-height:1.55}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.tab{background:#172740;color:var(--text)}.tab.active{background:linear-gradient(90deg,var(--cyan),var(--violet));color:#06101c}
-.context{display:none}.context.active{display:block}.inputgrid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;align-items:center;max-width:650px}.th{font-size:12px;color:var(--muted);font-weight:800}.v{font-weight:800;font-size:16px}.corner{color:var(--cyan)}
-input{width:100%;background:#07111f;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px;font-size:15px}input:focus{outline:2px solid #67e8f955;border-color:var(--cyan)}
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer">
+<title>Vowel Space Area Analyzer</title>
+<style>
+:root{--bg:#07111f;--card:#0d1a2b;--line:#29405e;--text:#edf5ff;--muted:#91a4c0;--cyan:#67e8f9;--violet:#a78bfa;--good:#86efac;--warn:#fbbf24}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0,#173052 0,#07111f 58%);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif}main{max-width:1250px;margin:auto;padding:28px}
+header{margin-bottom:22px}h1{font-size:32px;margin:0 0 7px}.sub{color:var(--muted);line-height:1.5}
+.card{background:#0d1a2bf2;border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 14px 45px #0005}h2{margin:0 0 7px;font-size:19px}.note{color:var(--muted);font-size:12px;line-height:1.55}
+.datahead{display:grid;grid-template-columns:55px 1.3fr 1fr 1fr;gap:9px;margin-top:16px;padding:0 9px;color:var(--muted);font-size:12px;font-weight:800}.vrow{display:grid;grid-template-columns:55px 1.3fr 1fr 1fr;gap:9px;align-items:center;padding:7px 9px;border-bottom:1px solid #1c2d44}.vrow:last-child{border-bottom:0}.vowel{font-weight:800;font-size:16px}.corner{color:var(--cyan)}.badge{font-size:10px;color:var(--cyan);border:1px solid #67e8f955;border-radius:999px;padding:3px 6px;margin-left:5px}
+input,textarea{width:100%;background:#07111f;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px;font-size:15px}input:focus,textarea:focus{outline:2px solid #67e8f955;border-color:var(--cyan)}input.invalid{border-color:var(--warn)}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}button{border:0;border-radius:10px;padding:11px 16px;font-weight:850;cursor:pointer;background:linear-gradient(90deg,var(--cyan),var(--violet));color:#06101c}button.secondary{background:#192942;color:var(--text)}
-.status{margin-top:12px;color:var(--good);font-size:13px;font-weight:700}.warning{color:#fbbf24}
-.results{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.result{background:#091321;border:1px solid var(--line);border-radius:14px;padding:15px}.result h3{margin:0 0 7px}.vsa{font-size:24px;font-weight:900;color:var(--cyan)}.metrics{margin-top:9px;color:#c5d4e8;line-height:1.7;font-size:13px}.eq{margin-top:11px;padding:12px;background:#06101c;border:1px solid var(--line);border-radius:10px;font:12px/1.55 ui-monospace,SFMono-Regular,monospace;white-space:pre-wrap;overflow:auto}
-.charts{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.chartbox{background:#091321;border:1px solid var(--line);border-radius:14px;padding:12px}.chartbox h3{margin:0 0 8px}.plot{display:block;width:100%;height:auto;border-radius:10px}
-.compare{overflow:auto}.compare table{width:100%;border-collapse:collapse;min-width:700px}.compare th,.compare td{padding:11px;border-bottom:1px solid var(--line);text-align:left}.compare th{color:var(--muted);font-size:12px}
-.method{display:grid;grid-template-columns:1fr 1fr;gap:13px}.method>div{background:#091321;border:1px solid var(--line);border-radius:12px;padding:13px}.method strong{display:block;margin-bottom:6px}
-@media(max-width:1050px){.results,.charts,.method{grid-template-columns:1fr}}@media(max-width:650px){.importhelp{grid-template-columns:1fr}main{padding:15px}.inputgrid{grid-template-columns:1fr 1fr}.inputgrid .th:first-child,.inputgrid .v{grid-column:1/-1}}
+.status{margin-top:11px;font-size:13px;font-weight:700;color:var(--good)}.warning{color:var(--warn)}
+.results{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{background:#091321;border:1px solid var(--line);border-radius:13px;padding:14px}.metric small{display:block;color:var(--muted);font-size:11px}.metric strong{display:block;margin-top:5px;font-size:21px;color:var(--cyan)}
+.graphwrap{background:#091321;border:1px solid var(--line);border-radius:14px;padding:12px}.plot{display:block;width:100%;height:auto}.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:9px;font-size:12px;color:var(--muted)}.legend b{color:var(--violet)}
+.eq{margin-top:13px;background:#07111f;border:1px solid var(--line);border-radius:10px;padding:13px;font:12px/1.6 ui-monospace,SFMono-Regular,monospace;white-space:pre-wrap;overflow:auto}
+.importbox{border-top:1px solid var(--line);margin-top:20px;padding-top:18px}.importbox textarea{min-height:90px;margin-top:10px;font:12px/1.5 ui-monospace,SFMono-Regular,monospace}.privacy{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.pill{background:#102238;border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:10px;color:#bdd0e8}
+@media(max-width:900px){.results{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){main{padding:14px}.datahead,.vrow{grid-template-columns:35px 1fr 1fr}.datahead div:nth-child(2),.vrow .vowel{grid-column:1/-1}.results{grid-template-columns:1fr}}
 </style>
 </head>
 <body><main>
-<header><h1>Vowel Space Area Analyzer</h1><div class="sub">Enter only F1 and F2. Everything else is calculated automatically. The four corner vowels are used for quadrilateral VSA; the remaining vowels are available for acoustic vowel-space plotting.</div></header>
+<header><h1>Vowel Space Area Analyzer</h1><div class="sub">Enter the F1 and F2 values you already have. The analyzer automatically identifies the four corner vowels, draws the quadrilateral vowel space, calculates VSA, and plots all supplied vowels.</div></header>
 
 <section class="card">
-<h2>1. Paste your research data</h2>
-<div class="note">Paste one participant row directly from Excel/Google Sheets. The first 5 columns are treated as metadata; after that, every vowel is expected as <b>F1, F2, VD</b>. VD is ignored automatically.</div>
-<div class="privacy"><span class="badge ok">● Local browser processing</span><span class="badge">No server upload</span><span class="badge">F1/F2 only for analysis</span></div>
-<div class="importhelp"><div><b>Expected order</b><br><span class="note">/iː/ → /ɪ/ → /ɛ/ → /æ/ → /ʌ/ → /ɑː/ → /ɔː/ → /ʊ/ → /uː/ → /ɝ/</span></div><div><b>What is used?</b><br><span class="note">Only F1 and F2. Sl. no, name, gender, proficiency and VD are not used in VSA calculations.</span></div></div>
-<textarea id="pasteBox" placeholder="Paste one participant row from Excel/Google Sheets here..."></textarea>
-<div class="actions"><button onclick="importRow()">Import F1/F2</button><button class="secondary" onclick="loadBhavya()">Load Bhavya example</button></div>
-<div class="progress"><span id="importProgress"></span></div><div id="importStatus" class="status"></div>
-</section><section class="card">
-<h2>1. Enter F1 and F2</h2>
-<div class="note">No duration, trial number, participant details, or other measurements are required. F1 and F2 are in Hz. Enter the values you have; the four corner vowels must be present to calculate VSA.</div>
-<div class="tabs" id="tabs"></div>
-<div id="contexts"></div>
-<div class="actions"><button onclick="calculate()">Analyze F1/F2</button><button class="secondary" onclick="clearAll()">Clear all</button><button class="secondary" onclick="loadExample()">Example data</button><button class="secondary" onclick="exportCSV()">Export CSV</button></div>
+<h2>1. F1 / F2 input</h2>
+<div class="note">This is the main input. You only need to type F1 and F2. VD, duration, trial number, gender, proficiency and other variables are not required for the acoustic calculation.</div>
+<div class="privacy"><span class="pill">10 vowels</span><span class="pill">F1 + F2 only</span><span class="pill">★ = VSA corner vowel</span><span class="pill">Browser-side calculation</span></div>
+<div class="datahead"><div>#</div><div>Vowel</div><div>F1 (Hz)</div><div>F2 (Hz)</div></div>
+<div id="vowelRows"></div>
+<div class="actions"><button id="analyzeBtn" type="button">Analyze vowel space</button><button class="secondary" id="clearBtn" type="button">Clear</button><button class="secondary" id="exampleBtn" type="button">Load Bhavya example</button></div>
 <div id="status" class="status"></div>
+
+<div class="importbox">
+<h2>Optional: paste a spreadsheet row</h2>
+<div class="note">If you already have a row in Excel/Google Sheets, paste it here. Expected structure: 5 metadata columns followed by 10 groups of F1, F2, VD. The importer uses only F1/F2.</div>
+<textarea id="pasteBox" placeholder="Paste your complete participant row here..."></textarea>
+<div class="actions"><button class="secondary" id="importBtn" type="button">Import F1/F2</button></div>
+<div id="importStatus" class="status"></div>
+</div>
 </section>
 
-<section class="card"><h2>2. Automatic VSA results</h2><div class="results" id="results"></div></section>
-<section class="card"><h2>3. Quadrilateral vowel graph</h2><div class="note">The polygon is drawn automatically through /iː/ → /æ/ → /ɑː/ → /uː/. F2 is horizontal and F1 is vertical; the four corner vowels define the quadrilateral VSA.</div><div class="charts" id="charts"></div></section>
-<section class="card"><h2>4. Context comparison</h2><div class="compare" id="comparison"></div></section>
-<section class="card"><h2>5. Data safety & method</h2><div class="method">
-<div><strong>Data safety</strong><span class="note">This static app performs calculations in the browser. It does not contain a database or an upload endpoint. Do not enter identifying information that is not required by your approved research workflow.</span></div>
-<div><strong>Quadrilateral VSA</strong><span class="note">Ordered points: /iː/ → /æ/ → /ɑː/ → /uː/. VSA is calculated with the shoelace equation and reported in Hz².</span></div>
-<div><strong>Additional vowels</strong><span class="note">/ɪ, ɛ, ʌ, ʊ, ɔː, ɝ/ are plotted when F1/F2 are supplied, but they are not included in the four-corner VSA.</span></div>
-</div></section>
+<section class="card"><h2>2. Automatic results</h2><div class="results" id="results"></div><div class="eq" id="equation">Enter the four corner-vowel F1/F2 pairs to generate the exact VSA equation.</div></section>
+
+<section class="card"><h2>3. Quadrilateral vowel graph</h2><div class="note">F2 is horizontal and F1 is vertical. The polygon is automatically formed in the fixed order /iː/ → /æ/ → /ɑː/ → /uː/. The other six vowels are shown as additional acoustic points.</div><div class="graphwrap"><canvas id="plot" class="plot" width="1000" height="650"></canvas><div class="legend"><span><b>●</b> Corner vowels /iː æ ɑː uː/ = VSA polygon</span><span>● Other vowels = acoustic points</span></div></div></section>
+
+<section class="card"><h2>4. Quadrilateral data</h2><div id="tableWrap" class="note">Results will appear here after the four corner vowels are entered.</div></section>
+
+<section class="card"><h2>5. Method</h2><div class="note"><b>VSA:</b> ½ × |Σ(F2ᵢ×F1ᵢ₊₁ − F1ᵢ×F2ᵢ₊₁)|, using /iː/ → /æ/ → /ɑː/ → /uː/. Area is reported in Hz². This tool is an analysis aid and should be checked against the approved research protocol before thesis/publication use.</div></section>
 </main>
 <script>
-const contexts=[["isolated","Isolated words"],["carrier","Carrier phrase"],["proposed","Proposed sentences"]];
-const vowels=[
-["i","/iː/"],["I","/ɪ/"],["e","/ɛ/"],["ae","/æ/"],["v","/ʌ/"],
-["a","/ɑː/"],["o","/ɔː/"],["U","/ʊ/"],["u","/uː/"],["r","/ɝ/"]
+(function(){
+"use strict";
+const VOWELS=[
+ {key:"i",label:"/iː/",corner:true},
+ {key:"I",label:"/ɪ/",corner:false},
+ {key:"e",label:"/ɛ/",corner:false},
+ {key:"ae",label:"/æ/",corner:true},
+ {key:"v",label:"/ʌ/",corner:false},
+ {key:"a",label:"/ɑː/",corner:true},
+ {key:"o",label:"/ɔː/",corner:false},
+ {key:"U",label:"/ʊ/",corner:false},
+ {key:"u",label:"/uː/",corner:true},
+ {key:"r",label:"/ɝ/",corner:false}
 ];
-const corners=new Set(["i","ae","a","u"]);
-let active="isolated";
-document.getElementById("tabs").innerHTML=contexts.map(function(c){return '<button class="tab '+(c[0]===active?'active':'')+'" onclick="showContext(\''+c[0]+'\')">'+c[1]+'</button>';}).join("");
-document.getElementById("contexts").innerHTML=contexts.map(function(c){return '<div class="context '+(c[0]===active?'active':'')+'" id="ctx_'+c[0]"><div class="inputgrid"><div class="th">Vowel</div><div class="th">F1 (Hz)</div><div class="th">F2 (Hz)</div>'+vowels.map(function(v){return '<div class="v '+(corners.has(v[0])?'corner':'')+'">'+v[1]+(corners.has(v[0])?' ★':'')+'</div><input id="'+c[0]+'_'+v[0]+'_f1" type="number" min="0" step="1" inputmode="numeric" oninput="calculate(true)"><input id="'+c[0]+'_'+v[0]+'_f2" type="number" min="0" step="1" inputmode="numeric" oninput="calculate(true)">';}).join("")+'</div><div class="note" style="margin-top:10px">★ = used automatically for quadrilateral VSA.</div></div>';}).join("");
+const CORNER_KEYS=["i","ae","a","u"];
+const rowHost=document.getElementById("vowelRows");
 
-function importRow(){
-  const raw=document.getElementById("pasteBox").value.trim();
-  const status=document.getElementById("importStatus");
-  const progress=document.getElementById("importProgress");
-  progress.style.width="0%";
-  if(!raw){status.textContent="Paste one participant row first.";status.className="status warning";return;}
-  const lines=raw.split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean);
-  let cells=null;
-  for(const line of lines){
-    let candidate=line.includes("\t")?line.split("\t"):line.replace(/^\s*\|/,"").replace(/\|\s*$/,"").split("|");
-    candidate=candidate.map(function(x){return x.trim();});
-    if(candidate.length>=35){cells=candidate;break;}
-  }
-  if(!cells){status.textContent="I could not find a complete 35-column participant row. Paste the full row from your spreadsheet.";status.className="status warning";return;}
-  while(cells.length>35 && cells[cells.length-1]==="")cells.pop();
-  const measurements=cells.slice(5,35);
-  const pairs=[];
-  for(let i=0;i<10;i++){
-    const f1=parseFloat(measurements[i*3]);
-    const f2=parseFloat(measurements[i*3+1]);
-    if(!Number.isFinite(f1)||!Number.isFinite(f2)||f1<=0||f2<=0){
-      status.textContent="Invalid F1/F2 in vowel "+(i+1)+". Check the spreadsheet order and values.";
-      status.className="status warning";return;
-    }
-    pairs.push([f1,f2]);
-    progress.style.width=((i+1)*10)+"%";
-  }
-  vowels.forEach(function(v,i){
-    document.getElementById("isolated_"+v[0]+"_f1").value=pairs[i][0];
-    document.getElementById("isolated_"+v[0]+"_f2").value=pairs[i][1];
-  });
-  calculate(false);
-  status.textContent="Imported 10 vowels successfully. VD and metadata were ignored.";
-  status.className="status";
-  showContext("isolated");
-}
-function loadBhavya(){
-  const row="6\tBhavya\t0\t3\t0\t310\t1981\t0.101\t360\t3534\t0.069\t633\t2122\t0.072\t773\t1224\t0.122\t729\t1481\t0.074\t695\t1449\t0.086\t416\t1052\t0.067\t362\t1125\t0.122\t715\t1180\t0.117\t638\t1645\t0.114";
-  document.getElementById("pasteBox").value=row;importRow();
-}
-function showContext(id){active=id;document.querySelectorAll(".context").forEach(function(x){x.classList.toggle("active",x.id==="ctx_"+id);});document.querySelectorAll(".tab").forEach(function(x,i){x.classList.toggle("active",contexts[i][0]===id);});}
-function vals(id){return vowels.map(function(v){let f1=parseFloat(document.getElementById(id+"_"+v[0]+"_f1").value),f2=parseFloat(document.getElementById(id+"_"+v[0]+"_f2").value);return {key:v[0],name:v[1],f1:f1,f2:f2,has:Number.isFinite(f1)&&Number.isFinite(f2)&&f1>0&&f2>0};});}
-function cornersFor(id){let p=vals(id).filter(function(q){return corners.has(q.key);});return p.length===4&&p.every(function(q){return q.has;})?p:null;}
-function area(p){let s=0;for(let i=0;i<4;i++){let j=(i+1)%4;s+=p[i].f2*p[j].f1-p[i].f1*p[j].f2;}return Math.abs(s)/2;}
-function signedArea(p){let s=0;for(let i=0;i<4;i++){let j=(i+1)%4;s+=p[i].f2*p[j].f1-p[i].f1*p[j].f2;}return s/2;}
-function centroid(p){let A=signedArea(p),cx=0,cy=0;for(let i=0;i<4;i++){let j=(i+1)%4,c=p[i].f2*p[j].f1-p[j].f2*p[i].f1;cx+=(p[i].f2+p[j].f2)*c;cy+=(p[i].f1+p[j].f1)*c;}return {f1:cy/(6*A),f2:cx/(6*A)};}
-function perimeter(p){let s=0;for(let i=0;i<4;i++){let j=(i+1)%4;s+=Math.hypot(p[j].f2-p[i].f2,p[j].f1-p[i].f1);}return s;}
+VOWELS.forEach(function(v,index){
+ const row=document.createElement("div");row.className="vrow";
+ const n=document.createElement("div");n.textContent=index+1;
+ const name=document.createElement("div");name.className="vowel "+(v.corner?"corner":"");name.textContent=v.label;
+ if(v.corner){const b=document.createElement("span");b.className="badge";b.textContent="VSA";name.appendChild(b);}
+ const f1=document.createElement("input");f1.type="number";f1.min="0";f1.step="1";f1.inputMode="numeric";f1.id=v.key+"_f1";f1.setAttribute("aria-label",v.label+" F1");
+ const f2=document.createElement("input");f2.type="number";f2.min="0";f2.step="1";f2.inputMode="numeric";f2.id=v.key+"_f2";f2.setAttribute("aria-label",v.label+" F2");
+ f1.addEventListener("input",analyzeLive);f2.addEventListener("input",analyzeLive);
+ row.append(n,name,f1,f2);rowHost.appendChild(row);
+});
+
+function value(key,type){return parseFloat(document.getElementById(key+"_"+type).value);}
+function allPoints(){return VOWELS.map(function(v){const f1=value(v.key,"f1"),f2=value(v.key,"f2");return {key:v.key,label:v.label,f1:f1,f2:f2,has:Number.isFinite(f1)&&Number.isFinite(f2)&&f1>0&&f2>0,corner:v.corner};});}
+function cornerPoints(){const all=allPoints();return CORNER_KEYS.map(function(k){return all.find(function(p){return p.key===k;});}).every(function(p){return p&&p.has;})?CORNER_KEYS.map(function(k){return all.find(function(p){return p.key===k;});}):null;}
+function area(p){let s=0;for(let i=0;i<4;i++){const j=(i+1)%4;s+=p[i].f2*p[j].f1-p[i].f1*p[j].f2;}return Math.abs(s)/2;}
+function signedArea(p){let s=0;for(let i=0;i<4;i++){const j=(i+1)%4;s+=p[i].f2*p[j].f1-p[i].f1*p[j].f2;}return s/2;}
+function centroid(p){const A=signedArea(p);let cx=0,cy=0;for(let i=0;i<4;i++){const j=(i+1)%4,c=p[i].f2*p[j].f1-p[j].f2*p[i].f1;cx+=(p[i].f2+p[j].f2)*c;cy+=(p[i].f1+p[j].f1)*c;}return {f1:cy/(6*A),f2:cx/(6*A)};}
+function perimeter(p){let s=0;for(let i=0;i<4;i++){const j=(i+1)%4;s+=Math.hypot(p[j].f2-p[i].f2,p[j].f1-p[i].f1);}return s;}
 function fcr(p){return (p[0].f1+p[1].f1+p[2].f1+p[3].f1)/(p[0].f2+p[1].f2+p[2].f2+p[3].f2);}
-function equation(p){let terms=[];for(let i=0;i<4;i++){let j=(i+1)%4;terms.push("("+p[i].f2+" × "+p[j].f1+" − "+p[i].f1+" × "+p[j].f2+")");}return "VSA = ½ × | Σ(F2ᵢ×F1ᵢ₊₁ − F1ᵢ×F2ᵢ₊₁) |\n= ½ × | "+terms.join(" + ")+" |\n= "+area(p).toLocaleString()+" Hz²";}
 function fmt(n){return Number(n).toLocaleString(undefined,{maximumFractionDigits:2});}
-function calculate(live){let data=[];let complete=0;contexts.forEach(function(c){let all=vals(c[0]),p=cornersFor(c[0]);if(p){complete++;let a=area(p),cen=centroid(p),per=perimeter(p),fr=fcr(p);data.push({id:c[0],label:c[1],all:all,p:p,a:a,cen:cen,per:per,fr:fr});}});document.getElementById("results").innerHTML=contexts.map(function(c){let x=data.find(function(z){return z.id===c[0];});if(!x)return '<div class="result"><h3>'+c[1]+'</h3><div class="note">Enter F1 and F2 for /iː/, /æ/, /ɑː/ and /uː/ to calculate VSA.</div></div>';return '<div class="result"><h3>'+x.label+'</h3><div class="vsa">'+fmt(x.a)+' Hz²</div><div class="metrics"><b>Centroid:</b> F1 '+fmt(x.cen.f1)+' Hz · F2 '+fmt(x.cen.f2)+' Hz<br><b>Perimeter:</b> '+fmt(x.per)+' Hz<br><b>FCR:</b> '+x.fr.toFixed(4)+'</div><div class="eq">'+equation(x.p)+'</div></div>';}).join("");
-document.getElementById("charts").innerHTML=data.map(function(x){return '<div class="chartbox"><h3>'+x.label+'</h3><canvas class="plot" id="plot_'+x.id+'" width="700" height="500"></canvas><div class="graphlegend"><span class="legendcorner">● Corner vowels = VSA polygon</span><span class="legendother">● Other vowels = acoustic points</span></div></div>';}).join("");
-data.forEach(function(x){draw(x.id,x.all,x.p);});
-let comp=data.map(function(x){return '<tr><td>'+x.label+'</td><td>'+fmt(x.a)+' Hz²</td><td>'+x.fr.toFixed(4)+'</td><td>'+fmt(x.cen.f1)+' / '+fmt(x.cen.f2)+'</td></tr>';}).join("");
-document.getElementById("comparison").innerHTML=comp?'<table><thead><tr><th>Context</th><th>VSA</th><th>FCR</th><th>Centroid F1 / F2 (Hz)</th></tr></thead><tbody>'+comp+'</tbody></table>':'<div class="note">Enter the four corner-vowel F1/F2 pairs to see the comparison.</div>';
-if(!live)document.getElementById("status").textContent=complete===3?"All three contexts analyzed automatically.":"Enter F1/F2 values; results update as you type.";
+function equation(p){let terms=[];for(let i=0;i<4;i++){const j=(i+1)%4;terms.push("("+p[i].f2+" × "+p[j].f1+" − "+p[i].f1+" × "+p[j].f2+")");}return "VSA = ½ × | Σ(F2ᵢ × F1ᵢ₊₁ − F1ᵢ × F2ᵢ₊₁) |\n= ½ × | "+terms.join(" + ")+" |\n= "+fmt(area(p))+" Hz²";}
+function setStatus(text,warn){const s=document.getElementById("status");s.textContent=text;s.className=warn?"status warning":"status";}
+function analyzeLive(){analyze(true);}
+function analyze(live){
+ const points=allPoints(),p=cornerPoints(),results=document.getElementById("results"),eq=document.getElementById("equation"),tw=document.getElementById("tableWrap");
+ if(!p){
+   results.innerHTML='<div class="metric"><small>VSA</small><strong>Waiting</strong><span class="note">Enter F1 and F2 for /iː/, /æ/, /ɑː/ and /uː/.</span></div>';
+   eq.textContent="Enter the four corner-vowel F1/F2 pairs to generate the exact VSA equation.";
+   tw.textContent="The four corner vowels are /iː/, /æ/, /ɑː/ and /uː/.";
+   draw(points,null);if(!live)setStatus("Enter F1/F2 values. The graph will update automatically.");return;
+ }
+ const A=area(p),C=centroid(p),P=perimeter(p),F=fcr(p);
+ results.innerHTML="";
+ [["VSA",fmt(A)+" Hz²"],["Centroid","F1 "+fmt(C.f1)+" · F2 "+fmt(C.f2)], ["Perimeter",fmt(P)+" Hz"],["FCR",F.toFixed(4)]].forEach(function(x){const d=document.createElement("div");d.className="metric";const s=document.createElement("small");s.textContent=x[0];const b=document.createElement("strong");b.textContent=x[1];d.append(s,b);results.appendChild(d);});
+ eq.textContent=equation(p);
+ tw.innerHTML="<table style='width:100%;border-collapse:collapse'><thead><tr><th style='text-align:left;padding:8px'>Vowel</th><th style='text-align:left;padding:8px'>F1 (Hz)</th><th style='text-align:left;padding:8px'>F2 (Hz)</th></tr></thead><tbody>"+p.map(function(q){return "<tr><td style='padding:8px;border-top:1px solid #263852'>"+q.label+"</td><td style='padding:8px;border-top:1px solid #263852'>"+q.f1+"</td><td style='padding:8px;border-top:1px solid #263852'>"+q.f2+"</td></tr>";}).join("")+"</tbody></table>";
+ draw(points,p);if(!live)setStatus("VSA calculated successfully.");
 }
-function draw(id,all,p){let c=document.getElementById("plot_"+id),g=c.getContext("2d"),W=c.width,H=c.height,pts=all.filter(function(q){return q.has;});if(!pts.length)return;let xs=pts.map(q=>q.f2),ys=pts.map(q=>q.f1),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys),dx=Math.max(100,(xmax-xmin)*.16),dy=Math.max(80,(ymax-ymin)*.16);xmin-=dx;xmax+=dx;ymin-=dy;ymax+=dy;let X=x=>55+(x-xmin)/(xmax-xmin)*(W-85),Y=y=>30+(y-ymin)/(ymax-ymin)*(H-75);g.clearRect(0,0,W,H);g.font="12px system-ui";g.strokeStyle="#21304a";g.fillStyle="#91a4c0";for(let k=0;k<=5;k++){let xx=xmin+(xmax-xmin)*k/5,yy=ymin+(ymax-ymin)*k/5;g.beginPath();g.moveTo(X(xx),30);g.lineTo(X(xx),H-45);g.stroke();g.fillText(Math.round(xx),X(xx)-12,H-27);g.beginPath();g.moveTo(55,Y(yy));g.lineTo(W-30,Y(yy));g.stroke();g.fillText(Math.round(yy),10,Y(yy)+4);}
-g.beginPath();p.forEach(function(q,i){i?g.lineTo(X(q.f2),Y(q.f1)):g.moveTo(X(q.f2),Y(q.f1));});g.closePath();g.fillStyle="rgba(103,232,249,.14)";g.fill();g.strokeStyle="#67e8f9";g.lineWidth=3;g.stroke();
-pts.forEach(function(q){let x=X(q.f2),y=Y(q.f1);g.beginPath();g.arc(x,y,corners.has(q.key)?6:4,0,Math.PI*2);g.fillStyle=corners.has(q.key)?"#a78bfa":"#91a4c0";g.fill();g.fillStyle="#edf5ff";g.font="bold 13px system-ui";g.fillText(q.name,x+8,y-7);});
-g.fillStyle="#edf5ff";g.font="bold 13px system-ui";g.fillText("F2 (Hz)",W/2-20,H-7);g.save();g.translate(13,H/2+20);g.rotate(-Math.PI/2);g.fillText("F1 (Hz)",0,0);g.restore();}
-function clearAll(){document.querySelectorAll('input[type="number"]').forEach(function(x){x.value="";});document.getElementById("results").innerHTML="";document.getElementById("charts").innerHTML="";document.getElementById("comparison").innerHTML="";document.getElementById("status").textContent="Cleared. Enter F1/F2 values.";showContext("isolated");}
-function loadExample(){let d={isolated:[[300,2500],[450,2200],[550,1900],[700,1800],[750,1200],[650,1500],[500,1650],[400,900],[350,900],[500,1350]],carrier:[[320,2450],[460,2180],[560,1870],[690,1780],[730,1180],[640,1480],[510,1620],[410,920],[360,920],[505,1340]],proposed:[[310,2480],[445,2210],[555,1900],[700,1810],[740,1210],[645,1490],[515,1630],[405,910],[355,910],[500,1350]]};contexts.forEach(function(c){d[c[0]].forEach(function(q,i){let k=vowels[i][0];document.getElementById(c[0]+"_"+k+"_f1").value=q[0];document.getElementById(c[0]+"_"+k+"_f2").value=q[1];});});calculate();}
-function exportCSV(){let rows=["Context,Vowel,F1_Hz,F2_Hz,VSA_Hz2,FCR"];contexts.forEach(function(c){let all=vals(c[0]),p=cornersFor(c[0]),a=p?area(p):"",fr=p?fcr(p):"";all.forEach(function(q){if(q.has)rows.push([c[1],q.name,q.f1,q.f2,a,fr].join(","));});});let blob=new Blob([rows.join("\n")],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="vowel_space_analysis.csv";a.click();URL.revokeObjectURL(a.href);}
-calculate(false);
-</script></body></html>
+function draw(points,p){
+ const c=document.getElementById("plot"),g=c.getContext("2d"),W=c.width,H=c.height;g.clearRect(0,0,W,H);
+ const valid=points.filter(function(q){return q.has;});if(!valid.length){g.fillStyle="#91a4c0";g.font="20px system-ui";g.fillText("Enter F1 and F2 values to generate the vowel graph.",45,70);return;}
+ let xs=valid.map(q=>q.f2),ys=valid.map(q=>q.f1),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys),dx=Math.max(150,(xmax-xmin)*.16),dy=Math.max(100,(ymax-ymin)*.16);xmin-=dx;xmax+=dx;ymin-=dy;ymax+=dy;
+ const X=x=>70+(x-xmin)/(xmax-xmin)*(W-110),Y=y=>45+(y-ymin)/(ymax-ymin)*(H-105);
+ g.font="12px system-ui";g.strokeStyle="#20324a";g.fillStyle="#91a4c0";
+ for(let k=0;k<=5;k++){const xx=xmin+(xmax-xmin)*k/5,yy=ymin+(ymax-ymin)*k/5;g.beginPath();g.moveTo(X(xx),45);g.lineTo(X(xx),H-60);g.stroke();g.fillText(Math.round(xx),X(xx)-15,H-35);g.beginPath();g.moveTo(70,Y(yy));g.lineTo(W-40,Y(yy));g.stroke();g.fillText(Math.round(yy),18,Y(yy)+4);}
+ if(p){g.beginPath();p.forEach(function(q,i){i?g.lineTo(X(q.f2),Y(q.f1)):g.moveTo(X(q.f2),Y(q.f1));});g.closePath();g.fillStyle="rgba(103,232,249,.13)";g.fill();g.strokeStyle="#67e8f9";g.lineWidth=4;g.stroke();}
+ valid.forEach(function(q){const x=X(q.f2),y=Y(q.f1);g.beginPath();g.arc(x,y,q.corner?7:5,0,Math.PI*2);g.fillStyle=q.corner?"#a78bfa":"#91a4c0";g.fill();g.fillStyle="#edf5ff";g.font="bold 14px system-ui";g.fillText(q.label,x+10,y-9);});
+ g.fillStyle="#edf5ff";g.font="bold 14px system-ui";g.fillText("F2 (Hz)",W/2-25,H-12);g.save();g.translate(17,H/2+25);g.rotate(-Math.PI/2);g.fillText("F1 (Hz)",0,0);g.restore();
+}
+function clearAll(){VOWELS.forEach(function(v){document.getElementById(v.key+"_f1").value="";document.getElementById(v.key+"_f2").value="";});document.getElementById("pasteBox").value="";document.getElementById("importStatus").textContent="";analyze(false);}
+function fillExample(){
+ const d=[[310,1981],[360,3534],[633,2122],[773,1224],[729,1481],[695,1449],[416,1052],[362,1125],[715,1180],[638,1645]];
+ VOWELS.forEach(function(v,i){document.getElementById(v.key+"_f1").value=d[i][0];document.getElementById(v.key+"_f2").value=d[i][1];});analyze(false);
+}
+function importRow(){
+ const raw=document.getElementById("pasteBox").value.trim(),s=document.getElementById("importStatus");if(!raw){s.textContent="Paste a complete row first.";s.className="status warning";return;}
+ const line=raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).find(x=>x.split(/\t|\|/).length>=35);if(!line){s.textContent="Complete row not detected. Expected 35 columns.";s.className="status warning";return;}
+ let cells=line.includes("\t")?line.split("\t"):line.replace(/^\s*\|/,"").replace(/\|\s*$/,"").split("|");cells=cells.map(x=>x.trim());if(cells.length<35){s.textContent="Expected at least 35 columns.";s.className="status warning";return;}
+ for(let i=0;i<10;i++){const f1=parseFloat(cells[5+i*3]),f2=parseFloat(cells[6+i*3]);if(!Number.isFinite(f1)||!Number.isFinite(f2)||f1<=0||f2<=0){s.textContent="Invalid F1/F2 for vowel "+(i+1)+".";s.className="status warning";return;}document.getElementById(VOWELS[i].key+"_f1").value=f1;document.getElementById(VOWELS[i].key+"_f2").value=f2;}
+ analyze(false);s.textContent="Imported 10 vowel F1/F2 values. VD was ignored.";s.className="status";
+}
+document.getElementById("analyzeBtn").addEventListener("click",function(){analyze(false);});
+document.getElementById("clearBtn").addEventListener("click",clearAll);
+document.getElementById("exampleBtn").addEventListener("click",fillExample);
+document.getElementById("importBtn").addEventListener("click",importRow);
+analyze(false);
+})();
+</script>
+</body></html>
