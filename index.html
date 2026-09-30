@@ -2,54 +2,77 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vowel Space Area Analyzer</title>
+<title>VSA Analyzer — F1/F2 Only</title>
 <style>
-:root{--bg:#07101d;--card:#0e1a2b;--line:#263650;--text:#edf5ff;--muted:#91a4c0;--a:#67e8f9;--b:#a78bfa}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#050b14,#102039);color:var(--text);font-family:Inter,system-ui,sans-serif}main{max-width:1400px;margin:auto;padding:26px}
-h1{margin:0 0 6px;font-size:30px}.sub{color:var(--muted)}header{margin-bottom:20px}
-.card{background:#0e1a2bee;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:18px;box-shadow:0 15px 50px #0005}h2{font-size:18px;margin:0 0 14px}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}.controls input,.controls select{background:#07111f;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px;width:100%}
-.contexts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.context{border:1px solid var(--line);border-radius:14px;padding:15px;background:#091321}
-.context h3{margin:0 0 12px}.table{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:7px;align-items:center}.head{color:var(--muted);font-size:12px;font-weight:700}.vowel{font-weight:800;font-size:17px}.table input{width:100%;padding:9px;background:#07111f;color:var(--text);border:1px solid var(--line);border-radius:8px}
-button{border:0;border-radius:10px;padding:11px 15px;font-weight:800;cursor:pointer;background:linear-gradient(90deg,var(--a),var(--b));color:#07101c}.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}button.alt{background:#1b2942;color:var(--text)}
-.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{background:#07111f;border:1px solid var(--line);border-radius:12px;padding:13px}.metric small{display:block;color:var(--muted)}.metric strong{display:block;font-size:19px;margin-top:5px}
-.results{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.result{border:1px solid var(--line);border-radius:14px;padding:14px;background:#091321}.result h3{margin:0 0 8px}.big{font-size:23px;color:var(--a);font-weight:800}.eq{margin-top:10px;padding:12px;background:#07111f;border:1px solid var(--line);border-radius:10px;font:12px/1.55 ui-monospace,monospace;white-space:pre-wrap;overflow:auto}.plot{width:100%;height:auto;background:#07111f;border:1px solid var(--line);border-radius:12px}.note{color:var(--muted);font-size:12px;margin-top:9px}
-@media(max-width:1000px){.contexts,.results{grid-template-columns:1fr}.controls{grid-template-columns:1fr}}
+:root{--bg:#06101c;--card:#0d1929;--line:#263852;--text:#edf5ff;--muted:#91a4c0;--cyan:#67e8f9;--violet:#a78bfa;--good:#86efac}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#122440 0,#06101c 55%);color:var(--text);font-family:Inter,system-ui,sans-serif}main{max-width:1450px;margin:auto;padding:28px}
+header{margin-bottom:20px}h1{font-size:32px;margin:0 0 7px}.sub{color:var(--muted);max-width:900px}.card{background:#0d1929ee;border:1px solid var(--line);border-radius:18px;padding:19px;margin-bottom:18px;box-shadow:0 14px 45px #0006}h2{font-size:19px;margin:0 0 7px}.note{font-size:12px;color:var(--muted);line-height:1.55}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.tab{background:#172740;color:var(--text)}.tab.active{background:linear-gradient(90deg,var(--cyan),var(--violet));color:#06101c}
+.context{display:none}.context.active{display:block}.inputgrid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;align-items:center;max-width:650px}.th{font-size:12px;color:var(--muted);font-weight:800}.v{font-weight:800;font-size:16px}.corner{color:var(--cyan)}
+input{width:100%;background:#07111f;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px;font-size:15px}input:focus{outline:2px solid #67e8f955;border-color:var(--cyan)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}button{border:0;border-radius:10px;padding:11px 16px;font-weight:850;cursor:pointer;background:linear-gradient(90deg,var(--cyan),var(--violet));color:#06101c}button.secondary{background:#192942;color:var(--text)}
+.status{margin-top:12px;color:var(--good);font-size:13px;font-weight:700}.warning{color:#fbbf24}
+.results{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.result{background:#091321;border:1px solid var(--line);border-radius:14px;padding:15px}.result h3{margin:0 0 7px}.vsa{font-size:24px;font-weight:900;color:var(--cyan)}.metrics{margin-top:9px;color:#c5d4e8;line-height:1.7;font-size:13px}.eq{margin-top:11px;padding:12px;background:#06101c;border:1px solid var(--line);border-radius:10px;font:12px/1.55 ui-monospace,SFMono-Regular,monospace;white-space:pre-wrap;overflow:auto}
+.charts{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.chartbox{background:#091321;border:1px solid var(--line);border-radius:14px;padding:12px}.chartbox h3{margin:0 0 8px}.plot{display:block;width:100%;height:auto;border-radius:10px}
+.compare{overflow:auto}.compare table{width:100%;border-collapse:collapse;min-width:700px}.compare th,.compare td{padding:11px;border-bottom:1px solid var(--line);text-align:left}.compare th{color:var(--muted);font-size:12px}
+.method{display:grid;grid-template-columns:1fr 1fr;gap:13px}.method>div{background:#091321;border:1px solid var(--line);border-radius:12px;padding:13px}.method strong{display:block;margin-bottom:6px}
+@media(max-width:1050px){.results,.charts,.method{grid-template-columns:1fr}}@media(max-width:650px){main{padding:15px}.inputgrid{grid-template-columns:1fr 1fr}.inputgrid .th:first-child,.inputgrid .v{grid-column:1/-1}}
 </style>
 </head>
 <body><main>
-<header><h1>Quadrilateral Vowel Space Analyzer</h1><div class="sub">F1/F2-only acoustic analysis using /iː/, /æ/, /ɑː/, /uː/ across three speech contexts.</div></header>
+<header><h1>Vowel Space Area Analyzer</h1><div class="sub">Enter only F1 and F2. Everything else is calculated automatically. The four corner vowels are used for quadrilateral VSA; the remaining vowels are available for acoustic vowel-space plotting.</div></header>
 
-<section class="card"><h2>Participant</h2><div class="controls">
-<input id="participant" placeholder="Participant ID (optional)">
-<select id="group"><option>High proficiency</option><option>Low proficiency</option><option>Not specified</option></select>
+<section class="card">
+<h2>1. Enter F1 and F2</h2>
+<div class="note">No duration, trial number, participant details, or other measurements are required. F1 and F2 are in Hz. Enter the values you have; the four corner vowels must be present to calculate VSA.</div>
+<div class="tabs" id="tabs"></div>
+<div id="contexts"></div>
+<div class="actions"><button onclick="calculate()">Analyze F1/F2</button><button class="secondary" onclick="clearAll()">Clear all</button><button class="secondary" onclick="loadExample()">Example data</button><button class="secondary" onclick="exportCSV()">Export CSV</button></div>
+<div id="status" class="status"></div>
+</section>
+
+<section class="card"><h2>2. Automatic VSA results</h2><div class="results" id="results"></div></section>
+<section class="card"><h2>3. F1–F2 vowel space</h2><div class="charts" id="charts"></div></section>
+<section class="card"><h2>4. Context comparison</h2><div class="compare" id="comparison"></div></section>
+<section class="card"><h2>5. Method used</h2><div class="method">
+<div><strong>Quadrilateral VSA</strong><span class="note">Ordered points: /iː/ → /æ/ → /ɑː/ → /uː/. VSA is calculated with the shoelace equation and reported in Hz².</span></div>
+<div><strong>Additional vowels</strong><span class="note">/ɪ, ɛ, ʌ, ʊ, ɔː, ɝ/ are plotted when F1/F2 are supplied, but they are not included in the four-corner VSA.</span></div>
 </div></section>
-
-<section class="card"><h2>F1 / F2 input</h2><div class="note">Only F1 and F2 are required. Use the same four vowels in the same order for every context.</div><div class="contexts" id="inputs"></div>
-<div class="btns"><button onclick="calculate()">Calculate VSA</button><button class="alt" onclick="example()">Load example</button><button class="alt" onclick="clearAll()">Clear</button><button class="alt" onclick="exportCSV()">Export CSV</button></div></section>
-
-<section class="card"><h2>Results</h2><div class="results" id="results"></div></section>
-
-<section class="card"><h2>F1–F2 diagrams</h2><div class="contexts" id="charts"></div></section>
-
-<section class="card"><h2>Context comparison</h2><div class="summary" id="comparison"></div></section>
 </main>
 <script>
 const contexts=[["isolated","Isolated words"],["carrier","Carrier phrase"],["proposed","Proposed sentences"]];
-const vowels=[["i","/iː/"],["ae","/æ/"],["a","/ɑː/"],["u","/uː/"]];
-document.getElementById("inputs").innerHTML=contexts.map(function(c){return '<div class="context"><h3>'+c[1]+'</h3><div class="table"><div class="head">Vowel</div><div class="head">F1 (Hz)</div><div class="head">F2 (Hz)</div>'+vowels.map(function(v){return '<div class="vowel">'+v[1]+'</div><input id="'+c[0]+'_'+v[0]+'_f1" type="number" min="0" step="1"><input id="'+c[0]+'_'+v[0]+'_f2" type="number" min="0" step="1">';}).join("")+'</div></div>';}).join("");
-function get(id){return vowels.map(function(v){return {key:v[0],name:v[1],f1:+document.getElementById(id+"_"+v[0]+"_f1").value,f2:+document.getElementById(id+"_"+v[0]+"_f2").value};});}
-function valid(p){return p.every(function(q){return Number.isFinite(q.f1)&&Number.isFinite(q.f2)&&q.f1>=0&&q.f2>=0;});}
-function area(p){var s=0;for(var i=0;i<4;i++){var j=(i+1)%4;s+=p[i].f2*p[j].f1-p[i].f1*p[j].f2;}return Math.abs(s)/2;}
-function signed(p){var s=0;for(var i=0;i<4;i++){var j=(i+1)%4;s+=p[i].f2*p[j].f1-p[i].f1*p[j].f2;}return s/2;}
-function centroid(p){var A=signed(p),x=0,y=0;for(var i=0;i<4;i++){var j=(i+1)%4,c=p[i].f2*p[j].f1-p[j].f2*p[i].f1;x+=(p[i].f2+p[j].f2)*c;y+=(p[i].f1+p[j].f1)*c;}return {f1:y/(6*A),f2:x/(6*A)};}
-function perimeter(p){var s=0;for(var i=0;i<4;i++){var j=(i+1)%4;s+=Math.hypot(p[j].f2-p[i].f2,p[j].f1-p[i].f1);}return s;}
-function fcr(p){if(!valid(p))return NaN;return (p[0].f1+p[1].f1+p[2].f1+p[3].f1)/(p[0].f2+p[1].f2+p[2].f2+p[3].f2);}
-function equation(p){var t=[];for(var i=0;i<4;i++){var j=(i+1)%4;t.push("("+p[i].f2+"×"+p[j].f1+" − "+p[i].f1+"×"+p[j].f2+")");}return "A = ½ × | Σ(F2ᵢ×F1ᵢ₊₁ − F1ᵢ×F2ᵢ₊₁) |\n= ½ × | "+t.join(" + ")+" |\n= "+area(p).toLocaleString()+" Hz²";}
-function draw(id,p){var c=document.getElementById("canvas_"+id),g=c.getContext("2d"),W=c.width,H=c.height;g.clearRect(0,0,W,H);var xs=p.map(function(q){return q.f2;}),ys=p.map(function(q){return q.f1;}),xmin=Math.min.apply(null,xs),xmax=Math.max.apply(null,xs),ymin=Math.min.apply(null,ys),ymax=Math.max.apply(null,ys),dx=Math.max(100,(xmax-xmin)*.16),dy=Math.max(80,(ymax-ymin)*.16);xmin-=dx;xmax+=dx;ymin-=dy;ymax+=dy;var X=function(x){return 60+(x-xmin)/(xmax-xmin)*(W-90);},Y=function(y){return 30+(y-ymin)/(ymax-ymin)*(H-80);};g.font="12px system-ui";g.strokeStyle="#21304a";g.fillStyle="#91a4c0";for(var k=0;k<=5;k++){var xx=xmin+(xmax-xmin)*k/5,yy=ymin+(ymax-ymin)*k/5;g.beginPath();g.moveTo(X(xx),30);g.lineTo(X(xx),H-50);g.stroke();g.fillText(Math.round(xx),X(xx)-12,H-30);g.beginPath();g.moveTo(60,Y(yy));g.lineTo(W-30,Y(yy));g.stroke();g.fillText(Math.round(yy),15,Y(yy)+4);}g.beginPath();p.forEach(function(q,i){i?g.lineTo(X(q.f2),Y(q.f1)):g.moveTo(X(q.f2),Y(q.f1));});g.closePath();g.fillStyle="rgba(103,232,249,.15)";g.fill();g.strokeStyle="#67e8f9";g.lineWidth=3;g.stroke();p.forEach(function(q){var x=X(q.f2),y=Y(q.f1);g.fillStyle="#a78bfa";g.beginPath();g.arc(x,y,6,0,Math.PI*2);g.fill();g.fillStyle="#edf5ff";g.font="bold 14px system-ui";g.fillText(q.name,x+9,y-8);});g.fillStyle="#edf5ff";g.font="bold 13px system-ui";g.fillText("F2 (Hz)",W/2-20,H-8);g.save();g.translate(13,H/2+20);g.rotate(-Math.PI/2);g.fillText("F1 (Hz)",0,0);g.restore();}
-function calculate(){var out=[],validContexts=[];contexts.forEach(function(c){var p=get(c[0]);if(valid(p)){var a=area(p),cen=centroid(p),per=perimeter(p),fr=fcr(p);out.push('<div class="result"><h3>'+c[1]+'</h3><div class="big">'+a.toLocaleString()+' Hz²</div><div class="note">Perimeter: '+per.toFixed(1)+' Hz<br>Centroid: F1 '+cen.f1.toFixed(1)+' · F2 '+cen.f2.toFixed(1)+'<br>FCR: '+fr.toFixed(4)+'</div><div class="eq">'+equation(p)+'</div></div>');validContexts.push({id:c[0],label:c[1],p:p,a:a});}else out.push('<div class="result"><h3>'+c[1]+'</h3><div class="note">Enter all eight F1/F2 values.</div></div>');});document.getElementById("results").innerHTML=out.join("");document.getElementById("charts").innerHTML=validContexts.map(function(x){return '<div class="context"><h3>'+x.label+'</h3><canvas class="plot" id="canvas_'+x.id+'" width="650" height="480"></canvas></div>';}).join("");validContexts.forEach(function(x){draw(x.id,x.p);});document.getElementById("comparison").innerHTML=validContexts.map(function(x){return '<div class="metric"><small>'+x.label+'</small><strong>'+x.a.toLocaleString()+' Hz²</strong></div>';}).join("");}
-function example(){var d={isolated:[[300,2500],[700,1800],[750,1200],[350,900]],carrier:[[320,2450],[680,1780],[730,1180],[360,920]],proposed:[[310,2480],[690,1810],[740,1210],[355,910]]};document.getElementById("participant").value="P01";contexts.forEach(function(c){d[c[0]].forEach(function(q,i){var k=vowels[i][0];document.getElementById(c[0]+"_"+k+"_f1").value=q[0];document.getElementById(c[0]+"_"+k+"_f2").value=q[1];});});calculate();}
-function clearAll(){document.querySelectorAll('input[type="number"]').forEach(function(x){x.value="";});document.getElementById("results").innerHTML="";document.getElementById("charts").innerHTML="";document.getElementById("comparison").innerHTML="";}
-function exportCSV(){var lines=["Participant,Group,Context,Vowel,F1_Hz,F2_Hz,VSA_Hz2"];contexts.forEach(function(c){var p=get(c[0]);if(valid(p)){var a=area(p);p.forEach(function(q){lines.push([document.getElementById("participant").value||"",document.getElementById("group").value,c[1],q.name,q.f1,q.f2,a].join(","));});}});var b=new Blob([lines.join("\n")],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=(document.getElementById("participant").value||"participant")+"_vsa.csv";a.click();URL.revokeObjectURL(a.href);}
-example();
+const vowels=[
+["i","/iː/"],["I","/ɪ/"],["e","/ɛ/"],["ae","/æ/"],["v","/ʌ/"],
+["a","/ɑː/"],["o","/ɔː/"],["U","/ʊ/"],["u","/uː/"],["r","/ɝ/"]
+];
+const corners=new Set(["i","ae","a","u"]);
+let active="isolated";
+document.getElementById("tabs").innerHTML=contexts.map(function(c){return '<button class="tab '+(c[0]===active?'active':'')+'" onclick="showContext(\''+c[0]+'\')">'+c[1]+'</button>';}).join("");
+document.getElementById("contexts").innerHTML=contexts.map(function(c){return '<div class="context '+(c[0]===active?'active':'')+'" id="ctx_'+c[0]"><div class="inputgrid"><div class="th">Vowel</div><div class="th">F1 (Hz)</div><div class="th">F2 (Hz)</div>'+vowels.map(function(v){return '<div class="v '+(corners.has(v[0])?'corner':'')+'">'+v[1]+(corners.has(v[0])?' ★':'')+'</div><input id="'+c[0]+'_'+v[0]+'_f1" type="number" min="0" step="1" inputmode="numeric" oninput="calculate(true)"><input id="'+c[0]+'_'+v[0]+'_f2" type="number" min="0" step="1" inputmode="numeric" oninput="calculate(true)">';}).join("")+'</div><div class="note" style="margin-top:10px">★ = used automatically for quadrilateral VSA.</div></div>';}).join("");
+
+function showContext(id){active=id;document.querySelectorAll(".context").forEach(function(x){x.classList.toggle("active",x.id==="ctx_"+id);});document.querySelectorAll(".tab").forEach(function(x,i){x.classList.toggle("active",contexts[i][0]===id);});}
+function vals(id){return vowels.map(function(v){let f1=parseFloat(document.getElementById(id+"_"+v[0]+"_f1").value),f2=parseFloat(document.getElementById(id+"_"+v[0]+"_f2").value);return {key:v[0],name:v[1],f1:f1,f2:f2,has:Number.isFinite(f1)&&Number.isFinite(f2)&&f1>0&&f2>0};});}
+function cornersFor(id){let p=vals(id).filter(function(q){return corners.has(q.key);});return p.length===4&&p.every(function(q){return q.has;})?p:null;}
+function area(p){let s=0;for(let i=0;i<4;i++){let j=(i+1)%4;s+=p[i].f2*p[j].f1-p[i].f1*p[j].f2;}return Math.abs(s)/2;}
+function signedArea(p){let s=0;for(let i=0;i<4;i++){let j=(i+1)%4;s+=p[i].f2*p[j].f1-p[i].f1*p[j].f2;}return s/2;}
+function centroid(p){let A=signedArea(p),cx=0,cy=0;for(let i=0;i<4;i++){let j=(i+1)%4,c=p[i].f2*p[j].f1-p[j].f2*p[i].f1;cx+=(p[i].f2+p[j].f2)*c;cy+=(p[i].f1+p[j].f1)*c;}return {f1:cy/(6*A),f2:cx/(6*A)};}
+function perimeter(p){let s=0;for(let i=0;i<4;i++){let j=(i+1)%4;s+=Math.hypot(p[j].f2-p[i].f2,p[j].f1-p[i].f1);}return s;}
+function fcr(p){return (p[0].f1+p[1].f1+p[2].f1+p[3].f1)/(p[0].f2+p[1].f2+p[2].f2+p[3].f2);}
+function equation(p){let terms=[];for(let i=0;i<4;i++){let j=(i+1)%4;terms.push("("+p[i].f2+" × "+p[j].f1+" − "+p[i].f1+" × "+p[j].f2+")");}return "VSA = ½ × | Σ(F2ᵢ×F1ᵢ₊₁ − F1ᵢ×F2ᵢ₊₁) |\n= ½ × | "+terms.join(" + ")+" |\n= "+area(p).toLocaleString()+" Hz²";}
+function fmt(n){return Number(n).toLocaleString(undefined,{maximumFractionDigits:2});}
+function calculate(live){let data=[];let complete=0;contexts.forEach(function(c){let all=vals(c[0]),p=cornersFor(c[0]);if(p){complete++;let a=area(p),cen=centroid(p),per=perimeter(p),fr=fcr(p);data.push({id:c[0],label:c[1],all:all,p:p,a:a,cen:cen,per:per,fr:fr});}});document.getElementById("results").innerHTML=contexts.map(function(c){let x=data.find(function(z){return z.id===c[0];});if(!x)return '<div class="result"><h3>'+c[1]+'</h3><div class="note">Enter F1 and F2 for /iː/, /æ/, /ɑː/ and /uː/ to calculate VSA.</div></div>';return '<div class="result"><h3>'+x.label+'</h3><div class="vsa">'+fmt(x.a)+' Hz²</div><div class="metrics"><b>Centroid:</b> F1 '+fmt(x.cen.f1)+' Hz · F2 '+fmt(x.cen.f2)+' Hz<br><b>Perimeter:</b> '+fmt(x.per)+' Hz<br><b>FCR:</b> '+x.fr.toFixed(4)+'</div><div class="eq">'+equation(x.p)+'</div></div>';}).join("");
+document.getElementById("charts").innerHTML=data.map(function(x){return '<div class="chartbox"><h3>'+x.label+'</h3><canvas class="plot" id="plot_'+x.id+'" width="700" height="500"></canvas></div>';}).join("");
+data.forEach(function(x){draw(x.id,x.all,x.p);});
+let comp=data.map(function(x){return '<tr><td>'+x.label+'</td><td>'+fmt(x.a)+' Hz²</td><td>'+x.fr.toFixed(4)+'</td><td>'+fmt(x.cen.f1)+' / '+fmt(x.cen.f2)+'</td></tr>';}).join("");
+document.getElementById("comparison").innerHTML=comp?'<table><thead><tr><th>Context</th><th>VSA</th><th>FCR</th><th>Centroid F1 / F2 (Hz)</th></tr></thead><tbody>'+comp+'</tbody></table>':'<div class="note">Enter the four corner-vowel F1/F2 pairs to see the comparison.</div>';
+if(!live)document.getElementById("status").textContent=complete===3?"All three contexts analyzed automatically.":"Enter F1/F2 values; results update as you type.";
+}
+function draw(id,all,p){let c=document.getElementById("plot_"+id),g=c.getContext("2d"),W=c.width,H=c.height,pts=all.filter(function(q){return q.has;});if(!pts.length)return;let xs=pts.map(q=>q.f2),ys=pts.map(q=>q.f1),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys),dx=Math.max(100,(xmax-xmin)*.16),dy=Math.max(80,(ymax-ymin)*.16);xmin-=dx;xmax+=dx;ymin-=dy;ymax+=dy;let X=x=>55+(x-xmin)/(xmax-xmin)*(W-85),Y=y=>30+(y-ymin)/(ymax-ymin)*(H-75);g.clearRect(0,0,W,H);g.font="12px system-ui";g.strokeStyle="#21304a";g.fillStyle="#91a4c0";for(let k=0;k<=5;k++){let xx=xmin+(xmax-xmin)*k/5,yy=ymin+(ymax-ymin)*k/5;g.beginPath();g.moveTo(X(xx),30);g.lineTo(X(xx),H-45);g.stroke();g.fillText(Math.round(xx),X(xx)-12,H-27);g.beginPath();g.moveTo(55,Y(yy));g.lineTo(W-30,Y(yy));g.stroke();g.fillText(Math.round(yy),10,Y(yy)+4);}
+g.beginPath();p.forEach(function(q,i){i?g.lineTo(X(q.f2),Y(q.f1)):g.moveTo(X(q.f2),Y(q.f1));});g.closePath();g.fillStyle="rgba(103,232,249,.14)";g.fill();g.strokeStyle="#67e8f9";g.lineWidth=3;g.stroke();
+pts.forEach(function(q){let x=X(q.f2),y=Y(q.f1);g.beginPath();g.arc(x,y,corners.has(q.key)?6:4,0,Math.PI*2);g.fillStyle=corners.has(q.key)?"#a78bfa":"#91a4c0";g.fill();g.fillStyle="#edf5ff";g.font="bold 13px system-ui";g.fillText(q.name,x+8,y-7);});
+g.fillStyle="#edf5ff";g.font="bold 13px system-ui";g.fillText("F2 (Hz)",W/2-20,H-7);g.save();g.translate(13,H/2+20);g.rotate(-Math.PI/2);g.fillText("F1 (Hz)",0,0);g.restore();}
+function clearAll(){document.querySelectorAll('input[type="number"]').forEach(function(x){x.value="";});document.getElementById("results").innerHTML="";document.getElementById("charts").innerHTML="";document.getElementById("comparison").innerHTML="";document.getElementById("status").textContent="Cleared. Enter F1/F2 values.";showContext("isolated");}
+function loadExample(){let d={isolated:[[300,2500],[450,2200],[550,1900],[700,1800],[750,1200],[650,1500],[500,1650],[400,900],[350,900],[500,1350]],carrier:[[320,2450],[460,2180],[560,1870],[690,1780],[730,1180],[640,1480],[510,1620],[410,920],[360,920],[505,1340]],proposed:[[310,2480],[445,2210],[555,1900],[700,1810],[740,1210],[645,1490],[515,1630],[405,910],[355,910],[500,1350]]};contexts.forEach(function(c){d[c[0]].forEach(function(q,i){let k=vowels[i][0];document.getElementById(c[0]+"_"+k+"_f1").value=q[0];document.getElementById(c[0]+"_"+k+"_f2").value=q[1];});});calculate();}
+function exportCSV(){let rows=["Context,Vowel,F1_Hz,F2_Hz,VSA_Hz2,FCR"];contexts.forEach(function(c){let all=vals(c[0]),p=cornersFor(c[0]),a=p?area(p):"",fr=p?fcr(p):"";all.forEach(function(q){if(q.has)rows.push([c[1],q.name,q.f1,q.f2,a,fr].join(","));});});let blob=new Blob([rows.join("\n")],{type:"text/csv"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="vowel_space_analysis.csv";a.click();URL.revokeObjectURL(a.href);}
+calculate(false);
 </script></body></html>
