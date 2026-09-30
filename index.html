@@ -16,7 +16,9 @@ input,textarea{width:100%;background:#071525;color:var(--text);border:1px solid 
 .graphwrap{background:#071525;border:1px solid #2c4b69;border-radius:16px;padding:14px;margin-top:14px}.plot{display:block;width:100%;height:auto;border-radius:10px}.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:11px;font-size:12px;color:var(--muted)}.legend b{color:var(--violet)}
 .eq{margin-top:14px;background:#071525;border:1px solid #2b4865;border-radius:12px;padding:14px;font:12px/1.7 ui-monospace,SFMono-Regular,monospace;white-space:pre-wrap;overflow:auto;color:#cfe3f7}
 .importbox{border-top:1px solid var(--line);margin-top:20px;padding-top:18px}.importbox textarea{min-height:90px;margin-top:10px;font:12px/1.5 ui-monospace,SFMono-Regular,monospace}.privacy{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.pill{background:rgba(16,34,56,.8);border:1px solid #2d4b68;border-radius:999px;padding:6px 10px;font-size:10px;color:#bdd0e8}
-@media(max-width:900px){main{width:min(100% - 28px,760px);padding-top:24px}.results{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){main{width:calc(100% - 20px);padding:16px 0 30px}.card{padding:17px;border-radius:16px}.datahead,.vrow{grid-template-columns:34px 1.1fr 1fr 1fr;gap:7px}.datahead{font-size:9px;padding-left:7px;padding-right:7px}.vrow{padding:8px 7px}.vowel{font-size:14px}.results{grid-template-columns:1fr 1fr}.metric{padding:12px}.actions button{flex:1}.eq{font-size:10px}}
+
+.compare-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:16px}.compare-box{background:#071525;border:1px solid #2c4b69;border-radius:16px;padding:16px}.compare-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.compare-person{background:rgba(103,232,249,.025);border:1px solid rgba(53,87,119,.55);border-radius:12px;padding:12px;margin-bottom:10px}.compare-person h3{font-size:13px;margin:0 0 9px}.compare-table{width:100%;border-collapse:collapse;font-size:12px}.compare-table th,.compare-table td{padding:9px 7px;border-bottom:1px solid rgba(53,87,119,.45);text-align:left}.compare-table th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em}.compare-highlight{color:var(--cyan);font-weight:850}.compare-note{margin-top:10px}.compare-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:900px){main{width:min(100% - 28px,760px);padding-top:24px}.results{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){.compare-grid{grid-template-columns:1fr}.compare-fields{grid-template-columns:1fr 1fr}.compare-table{font-size:11px}}@media(max-width:620px){{main{width:calc(100% - 20px);padding:16px 0 30px}.card{padding:17px;border-radius:16px}.datahead,.vrow{grid-template-columns:34px 1.1fr 1fr 1fr;gap:7px}.datahead{font-size:9px;padding-left:7px;padding-right:7px}.vrow{padding:8px 7px}.vowel{font-size:14px}.results{grid-template-columns:1fr 1fr}.metric{padding:12px}.actions button{flex:1}.eq{font-size:10px}}
 
 .theme-toggle{position:absolute;right:4px;top:4px;z-index:10;display:flex;align-items:center;gap:7px;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:999px;padding:7px 11px;font-size:11px;font-weight:800;cursor:pointer;box-shadow:none}.theme-toggle:hover{transform:none;box-shadow:none}.theme-icon{font-size:14px}
 :root{--plot-grid:#20324a;--plot-muted:#91a4c0}
@@ -50,6 +52,21 @@ body.light .vrow{border-color:#dbe4ed}
 
 <section class="card"><h2>3. Quadrilateral vowel graph</h2><div class="note">F2 is horizontal and F1 is vertical. The quadrilateral is formed in the fixed order /iː/ → /æ/ → /ɑː/ → /uː/.</div><div class="graphwrap"><canvas id="plot" class="plot" width="1000" height="650"></canvas><div class="legend"><span><b>●</b> /iː/ /æ/ /ɑː/ /uː/ = VSA polygon</span></div></div></section>
 
+<section class="card">
+<h2>4. Group comparison</h2>
+<div class="note">Enter the four F1/F2 values for multiple participants. Their quadrilateral vowel spaces will be overlaid on one graph and their VSA values will be compared. The comparison describes the measured vowel-space size; it does not by itself determine proficiency.</div>
+<div class="compare-grid">
+<div class="compare-box">
+<div id="comparePeople"></div>
+<div class="compare-actions"><button id="addPersonBtn" type="button">+ Add participant</button><button class="secondary" id="compareBtn" type="button">Compare group</button><button class="secondary" id="clearCompareBtn" type="button">Clear group</button></div>
+<div id="compareStatus" class="status"></div>
+</div>
+<div class="compare-box">
+<canvas id="comparePlot" class="plot" width="760" height="560"></canvas>
+<div id="compareResults" class="note compare-note">Add at least two participants to compare their vowel spaces.</div>
+</div>
+</div>
+</section>
 <section class="card"><h2>4. Quadrilateral data</h2><div id="tableWrap" class="note">Results will appear here after the four corner vowels are entered.</div></section>
 
 <section class="card"><h2>5. Method</h2><div class="note"><b>VSA:</b> ½ × |Σ(F2ᵢ×F1ᵢ₊₁ − F1ᵢ×F2ᵢ₊₁)|, using only the four corner vowels /iː/ → /æ/ → /ɑː/ → /uː/. Area is reported in Hz². This tool is an analysis aid and should be checked against the approved research protocol before thesis/publication use.</div></section>
@@ -130,6 +147,60 @@ function draw(points,p){
  g.save();g.translate(17,H/2+25);g.rotate(-Math.PI/2);g.fillText("F1 (Hz)",0,0);g.restore();
  g.font="bold 13px system-ui";g.fillStyle="#91a4c0";g.fillText("HIGH",W-92,34);g.fillText("LOW",W-92,H-70);g.fillText("FRONT",82,34);g.fillText("BACK",W-115,34);
 }
+let compareCount=0;
+function addComparePerson(){
+ compareCount++;
+ const host=document.getElementById("comparePeople"),box=document.createElement("div");
+ box.className="compare-person";box.dataset.person=compareCount;
+ box.innerHTML='<h3>Participant '+compareCount+'</h3><div class="compare-fields">'+
+ VOWELS.map(function(v){return '<div><label class="note">'+v.label+' F1</label><input type="number" min="0" step="1" class="cf1" data-key="'+v.key+'"></div><div><label class="note">'+v.label+' F2</label><input type="number" min="0" step="1" class="cf2" data-key="'+v.key+'"></div>';}).join('')+
+ '</div>';
+ host.appendChild(box);
+}
+function getCompareData(){
+ return Array.from(document.querySelectorAll(".compare-person")).map(function(box,idx){
+   const pts=VOWELS.map(function(v){
+     const f1=parseFloat(box.querySelector('.cf1[data-key="'+v.key+'"]').value);
+     const f2=parseFloat(box.querySelector('.cf2[data-key="'+v.key+'"]').value);
+     return {key:v.key,label:v.label,f1:f1,f2:f2,has:Number.isFinite(f1)&&Number.isFinite(f2)&&f1>0&&f2>0,corner:true};
+   });
+   return {name:"Participant "+(idx+1),points:pts};
+ });
+}
+function compareArea(p){
+ let s=0;for(let i=0;i<4;i++){const j=(i+1)%4;s+=p[i].f2*p[j].f1-p[i].f1*p[j].f2;}return Math.abs(s)/2;
+}
+function drawComparison(groups){
+ const c=document.getElementById("comparePlot"),g=c.getContext("2d"),W=c.width,H=c.height;g.clearRect(0,0,W,H);
+ const all=groups.flatMap(x=>x.points),xs=all.map(q=>q.f2),ys=all.map(q=>q.f1);
+ if(!xs.length)return;
+ let xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys),dx=Math.max(180,(xmax-xmin)*.18),dy=Math.max(90,(ymax-ymin)*.16);xmin-=dx;xmax+=dx;ymin-=dy;ymax+=dy;
+ const X=x=>65+(xmax-x)/(xmax-xmin)*(W-105),Y=y=>35+(y-ymin)/(ymax-ymin)*(H-90);
+ g.font="11px system-ui";g.strokeStyle=getComputedStyle(document.body).getPropertyValue("--plot-grid")||"#20324a";g.fillStyle=getComputedStyle(document.body).getPropertyValue("--plot-muted")||"#91a4c0";
+ for(let k=0;k<=5;k++){const xx=xmin+(xmax-xmin)*k/5,yy=ymin+(ymax-ymin)*k/5;g.beginPath();g.moveTo(X(xx),35);g.lineTo(X(xx),H-55);g.stroke();g.fillText(Math.round(xx),X(xx)-14,H-32);g.beginPath();g.moveTo(65,Y(yy));g.lineTo(W-40,Y(yy));g.stroke();g.fillText(Math.round(yy),15,Y(yy)+4);}
+ groups.forEach(function(gr,gi){
+   const p=gr.points, poly=[p[0],p[1],p[2],p[3]];
+   g.beginPath();poly.forEach(function(q,i){i?g.lineTo(X(q.f2),Y(q.f1)):g.moveTo(X(q.f2),Y(q.f1));});g.closePath();
+   const hue=gi*67%360;g.strokeStyle="hsl("+hue+" 75% 62%)";g.fillStyle="hsla("+hue+" 75% 62% / .09)";g.lineWidth=3;g.fill();g.stroke();
+   p.forEach(function(q){g.beginPath();g.arc(X(q.f2),Y(q.f1),5,0,Math.PI*2);g.fillStyle="hsl("+hue+" 75% 62%)";g.fill();});
+   g.fillStyle="hsl("+hue+" 75% 62%)";g.font="bold 12px system-ui";g.fillText(gr.name,12,20+gi*16);
+ });
+ g.fillStyle=getComputedStyle(document.body).getPropertyValue("--text")||"#edf5ff";g.font="bold 12px system-ui";g.fillText("F2 (Hz)  ← front / high F2        back / low F2 →",W/2-145,H-10);g.save();g.translate(13,H/2+20);g.rotate(-Math.PI/2);g.fillText("F1 (Hz)",0,0);g.restore();
+}
+function runComparison(){
+ const groups=getCompareData(),status=document.getElementById("compareStatus"),out=document.getElementById("compareResults");
+ if(groups.length<2){status.textContent="Add at least two participants.";status.className="status warning";return;}
+ if(groups.some(x=>x.points.some(q=>!q.has))){status.textContent="Enter valid positive F1 and F2 values for every vowel for every participant.";status.className="status warning";return;}
+ groups.forEach(x=>x.vsa=compareArea(x.points));
+ drawComparison(groups);
+ const sorted=groups.slice().sort((a,b)=>b.vsa-a.vsa);
+ out.innerHTML='<table class="compare-table"><thead><tr><th>Participant</th><th>VSA (Hz²)</th></tr></thead><tbody>'+
+ sorted.map(function(x){return '<tr><td>'+x.name+'</td><td class="compare-highlight">'+fmt(x.vsa)+'</td></tr>';}).join('')+
+ '</tbody></table><div class="note">The table is ordered by measured VSA for convenient comparison. A larger VSA indicates a larger measured quadrilateral vowel space; it should not be interpreted as proficiency without an appropriate study design and statistical analysis.</div>';
+ status.textContent="Group comparison updated.";
+ status.className="status";
+}
+function clearComparison(){document.getElementById("comparePeople").innerHTML="";document.getElementById("compareResults").textContent="Add at least two participants to compare their vowel spaces.";document.getElementById("compareStatus").textContent="";compareCount=0;addComparePerson();addComparePerson();drawComparison([]);}
 function clearAll(){VOWELS.forEach(function(v){document.getElementById(v.key+"_f1").value="";document.getElementById(v.key+"_f2").value="";});document.getElementById("pasteBox").value="";document.getElementById("importStatus").textContent="";analyze(false);}
 function importRow(){
  const raw=document.getElementById("pasteBox").value.trim(),s=document.getElementById("importStatus");if(!raw){s.textContent="Paste a complete row first.";s.className="status warning";return;}
@@ -138,10 +209,10 @@ function importRow(){
  for(let i=0;i<10;i++){const f1=parseFloat(cells[5+i*3]),f2=parseFloat(cells[6+i*3]);if(!Number.isFinite(f1)||!Number.isFinite(f2)||f1<=0||f2<=0){s.textContent="Invalid F1/F2 for vowel "+(i+1)+".";s.className="status warning";return;}document.getElementById(VOWELS[i].key+"_f1").value=f1;document.getElementById(VOWELS[i].key+"_f2").value=f2;}
  analyze(false);s.textContent="Imported 10 vowel F1/F2 values. VD was ignored.";s.className="status";
 }
-document.getElementById("analyzeBtn").addEventListener("click",function(){analyze(false);});
+document.getElementById("addPersonBtn").addEventListener("click",addComparePerson);document.getElementById("compareBtn").addEventListener("click",runComparison);document.getElementById("clearCompareBtn").addEventListener("click",clearComparison);document.getElementById("analyzeBtn").addEventListener("click",function(){analyze(false);});
 document.getElementById("clearBtn").addEventListener("click",clearAll);
 document.getElementById("importBtn").addEventListener("click",importRow);
-analyze(false);
+analyze(false);addComparePerson();addComparePerson();
 })();
 </script>
 </body></html>
