@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VSA Analyzer — F1/F2 Only</title>
-<style>textarea{width:100%;min-height:110px;margin-top:12px;padding:12px;background:#07111f;color:var(--text);border:1px solid var(--line);border-radius:10px;font:13px/1.5 ui-monospace,SFMono-Regular,monospace;resize:vertical}textarea:focus{outline:2px solid #67e8f955;border-color:var(--cyan)}
-.graphlegend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:8px}.legendcorner{color:var(--violet);font-weight:800}.legendother{color:#91a4c0}
+<style>textarea{width:100%;min-height:150px;margin-top:12px;padding:12px;background:#07111f;color:var(--text);border:1px solid var(--line);border-radius:10px;font:13px/1.5 ui-monospace,SFMono-Regular,monospace;resize:vertical}textarea:focus{outline:2px solid #67e8f955;border-color:var(--cyan)}
+.privacy{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#102238;border:1px solid var(--line);color:#bcd0e8;font-size:11px;font-weight:800}.badge.ok{color:var(--good);border-color:#86efac44}.importhelp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.importhelp>div{background:#091321;border:1px solid var(--line);border-radius:10px;padding:11px}.progress{height:6px;background:#07111f;border-radius:99px;overflow:hidden;margin-top:10px}.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet));transition:width .2s}.graphlegend{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:8px}.legendcorner{color:var(--violet);font-weight:800}.legendother{color:#91a4c0}
 
 :root{--bg:#06101c;--card:#0d1929;--line:#263852;--text:#edf5ff;--muted:#91a4c0;--cyan:#67e8f9;--violet:#a78bfa;--good:#86efac}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#122440 0,#06101c 55%);color:var(--text);font-family:Inter,system-ui,sans-serif}main{max-width:1450px;margin:auto;padding:28px}
@@ -18,7 +18,7 @@ input{width:100%;background:#07111f;color:var(--text);border:1px solid var(--lin
 .charts{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.chartbox{background:#091321;border:1px solid var(--line);border-radius:14px;padding:12px}.chartbox h3{margin:0 0 8px}.plot{display:block;width:100%;height:auto;border-radius:10px}
 .compare{overflow:auto}.compare table{width:100%;border-collapse:collapse;min-width:700px}.compare th,.compare td{padding:11px;border-bottom:1px solid var(--line);text-align:left}.compare th{color:var(--muted);font-size:12px}
 .method{display:grid;grid-template-columns:1fr 1fr;gap:13px}.method>div{background:#091321;border:1px solid var(--line);border-radius:12px;padding:13px}.method strong{display:block;margin-bottom:6px}
-@media(max-width:1050px){.results,.charts,.method{grid-template-columns:1fr}}@media(max-width:650px){main{padding:15px}.inputgrid{grid-template-columns:1fr 1fr}.inputgrid .th:first-child,.inputgrid .v{grid-column:1/-1}}
+@media(max-width:1050px){.results,.charts,.method{grid-template-columns:1fr}}@media(max-width:650px){.importhelp{grid-template-columns:1fr}main{padding:15px}.inputgrid{grid-template-columns:1fr 1fr}.inputgrid .th:first-child,.inputgrid .v{grid-column:1/-1}}
 </style>
 </head>
 <body><main>
@@ -26,10 +26,12 @@ input{width:100%;background:#07111f;color:var(--text);border:1px solid var(--lin
 
 <section class="card">
 <h2>1. Paste your research data</h2>
-<div class="note">Paste a spreadsheet row containing: Sl. no, Name, Gender, LEAP score, Proficiency, then the 10 vowel F1/F2/VD groups. The analyzer automatically ignores VD and uses only F1/F2.</div>
+<div class="note">Paste one participant row directly from Excel/Google Sheets. The first 5 columns are treated as metadata; after that, every vowel is expected as <b>F1, F2, VD</b>. VD is ignored automatically.</div>
+<div class="privacy"><span class="badge ok">● Local browser processing</span><span class="badge">No server upload</span><span class="badge">F1/F2 only for analysis</span></div>
+<div class="importhelp"><div><b>Expected order</b><br><span class="note">/iː/ → /ɪ/ → /ɛ/ → /æ/ → /ʌ/ → /ɑː/ → /ɔː/ → /ʊ/ → /uː/ → /ɝ/</span></div><div><b>What is used?</b><br><span class="note">Only F1 and F2. Sl. no, name, gender, proficiency and VD are not used in VSA calculations.</span></div></div>
 <textarea id="pasteBox" placeholder="Paste one participant row from Excel/Google Sheets here..."></textarea>
 <div class="actions"><button onclick="importRow()">Import F1/F2</button><button class="secondary" onclick="loadBhavya()">Load Bhavya example</button></div>
-<div id="importStatus" class="status"></div>
+<div class="progress"><span id="importProgress"></span></div><div id="importStatus" class="status"></div>
 </section><section class="card">
 <h2>1. Enter F1 and F2</h2>
 <div class="note">No duration, trial number, participant details, or other measurements are required. F1 and F2 are in Hz. Enter the values you have; the four corner vowels must be present to calculate VSA.</div>
@@ -42,7 +44,8 @@ input{width:100%;background:#07111f;color:var(--text);border:1px solid var(--lin
 <section class="card"><h2>2. Automatic VSA results</h2><div class="results" id="results"></div></section>
 <section class="card"><h2>3. Quadrilateral vowel graph</h2><div class="note">The polygon is drawn automatically through /iː/ → /æ/ → /ɑː/ → /uː/. F2 is horizontal and F1 is vertical; the four corner vowels define the quadrilateral VSA.</div><div class="charts" id="charts"></div></section>
 <section class="card"><h2>4. Context comparison</h2><div class="compare" id="comparison"></div></section>
-<section class="card"><h2>5. Method used</h2><div class="method">
+<section class="card"><h2>5. Data safety & method</h2><div class="method">
+<div><strong>Data safety</strong><span class="note">This static app performs calculations in the browser. It does not contain a database or an upload endpoint. Do not enter identifying information that is not required by your approved research workflow.</span></div>
 <div><strong>Quadrilateral VSA</strong><span class="note">Ordered points: /iː/ → /æ/ → /ɑː/ → /uː/. VSA is calculated with the shoelace equation and reported in Hz².</span></div>
 <div><strong>Additional vowels</strong><span class="note">/ɪ, ɛ, ʌ, ʊ, ɔː, ɝ/ are plotted when F1/F2 are supplied, but they are not included in the four-corner VSA.</span></div>
 </div></section>
@@ -60,28 +63,38 @@ document.getElementById("contexts").innerHTML=contexts.map(function(c){return '<
 
 function importRow(){
   const raw=document.getElementById("pasteBox").value.trim();
-  if(!raw){document.getElementById("importStatus").textContent="Paste a participant row first.";return;}
-  const line=raw.split(/\n/).map(x=>x.trim()).filter(Boolean).find(x=>/\d/.test(x));
-  if(!line){document.getElementById("importStatus").textContent="No data row found.";return;}
-  let cells=line.split(/\t/);
-  if(cells.length<10) cells=line.replace(/^\|/,"").replace(/\|$/,"").split("|").map(x=>x.trim());
-  let nums=[];
-  cells.forEach(function(cell){let m=cell.match(/-?\d+(?:\.\d+)?/g);if(m)m.forEach(function(x){nums.push(parseFloat(x));});});
-  // Standard research row: 5 metadata fields, then 10 × (F1,F2,VD).
-  // Keep only the first two numbers from each triplet.
-  if(nums.length<35){
-    document.getElementById("importStatus").textContent="Could not detect the expected 10 vowel F1/F2/VD groups. Paste the complete spreadsheet row.";
-    return;
+  const status=document.getElementById("importStatus");
+  const progress=document.getElementById("importProgress");
+  progress.style.width="0%";
+  if(!raw){status.textContent="Paste one participant row first.";status.className="status warning";return;}
+  const lines=raw.split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean);
+  let cells=null;
+  for(const line of lines){
+    let candidate=line.includes("\t")?line.split("\t"):line.replace(/^\s*\|/,"").replace(/\|\s*$/,"").split("|");
+    candidate=candidate.map(function(x){return x.trim();});
+    if(candidate.length>=35){cells=candidate;break;}
   }
-  const meta=nums.slice(0,5), measured=nums.slice(5);
-  const f1f2=[];
-  for(let i=0;i<10;i++){f1f2.push(measured[i*3]);f1f2.push(measured[i*3+1]);}
+  if(!cells){status.textContent="I could not find a complete 35-column participant row. Paste the full row from your spreadsheet.";status.className="status warning";return;}
+  while(cells.length>35 && cells[cells.length-1]==="")cells.pop();
+  const measurements=cells.slice(5,35);
+  const pairs=[];
+  for(let i=0;i<10;i++){
+    const f1=parseFloat(measurements[i*3]);
+    const f2=parseFloat(measurements[i*3+1]);
+    if(!Number.isFinite(f1)||!Number.isFinite(f2)||f1<=0||f2<=0){
+      status.textContent="Invalid F1/F2 in vowel "+(i+1)+". Check the spreadsheet order and values.";
+      status.className="status warning";return;
+    }
+    pairs.push([f1,f2]);
+    progress.style.width=((i+1)*10)+"%";
+  }
   vowels.forEach(function(v,i){
-    document.getElementById("isolated_"+v[0]+"_f1").value=f1f2[i*2];
-    document.getElementById("isolated_"+v[0]+"_f2").value=f1f2[i*2+1];
+    document.getElementById("isolated_"+v[0]+"_f1").value=pairs[i][0];
+    document.getElementById("isolated_"+v[0]+"_f2").value=pairs[i][1];
   });
   calculate(false);
-  document.getElementById("importStatus").textContent="Imported 10 vowels: F1/F2 only. VD values were ignored.";
+  status.textContent="Imported 10 vowels successfully. VD and metadata were ignored.";
+  status.className="status";
   showContext("isolated");
 }
 function loadBhavya(){
