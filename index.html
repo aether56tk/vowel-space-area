@@ -100,8 +100,8 @@ function draw(points,p){
  g.font="12px system-ui";g.strokeStyle="#20324a";g.fillStyle="#91a4c0";
  for(let k=0;k<=5;k++){const xx=xmin+(xmax-xmin)*k/5,yy=ymin+(ymax-ymin)*k/5;g.beginPath();g.moveTo(X(xx),45);g.lineTo(X(xx),H-60);g.stroke();g.fillText(Math.round(xx),X(xx)-18,H-35);g.beginPath();g.moveTo(70,Y(yy));g.lineTo(W-50,Y(yy));g.stroke();g.fillText(Math.round(yy),18,Y(yy)+4);}
  if(p){
-   // Draw the perimeter in the visually correct quadrilateral order; this is the reverse of the calculation order and gives the same polygon/area.
-   const perimeterKeys=["i","u","a","ae"];
+   // Draw the same fixed corner-vowel order used by the VSA calculation so the displayed polygon matches the shoelace protocol.
+   const perimeterKeys=["i","ae","a","u"];
    const poly=perimeterKeys.map(function(k){return p.find(function(q){return q.key===k;});});
    g.beginPath();poly.forEach(function(q,i){i?g.lineTo(X(q.f2),Y(q.f1)):g.moveTo(X(q.f2),Y(q.f1));});g.closePath();
    g.fillStyle="rgba(103,232,249,.13)";g.fill();g.strokeStyle="#67e8f9";g.lineWidth=4;g.stroke();
