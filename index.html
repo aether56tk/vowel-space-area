@@ -93,14 +93,23 @@ function analyze(live){
 }
 function draw(points,p){
  const c=document.getElementById("plot"),g=c.getContext("2d"),W=c.width,H=c.height;g.clearRect(0,0,W,H);
- const valid=points.filter(function(q){return q.has;});if(!valid.length){g.fillStyle="#91a4c0";g.font="20px system-ui";g.fillText("Enter F1 and F2 values to generate the vowel graph.",45,70);return;}
- let xs=valid.map(q=>q.f2),ys=valid.map(q=>q.f1),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys),dx=Math.max(150,(xmax-xmin)*.16),dy=Math.max(100,(ymax-ymin)*.16);xmin-=dx;xmax+=dx;ymin-=dy;ymax+=dy;
- const X=x=>70+(x-xmin)/(xmax-xmin)*(W-110),Y=y=>45+(y-ymin)/(ymax-ymin)*(H-105);
+ const valid=points.filter(function(q){return q.has;});if(!valid.length){g.fillStyle="#91a4c0";g.font="20px system-ui";g.fillText("Enter F1 and F2 values to generate the vowel quadrilateral.",45,70);return;}
+ let xs=valid.map(q=>q.f2),ys=valid.map(q=>q.f1),xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys),dx=Math.max(180,(xmax-xmin)*.18),dy=Math.max(90,(ymax-ymin)*.16);xmin-=dx;xmax+=dx;ymin-=dy;ymax+=dy;
+ // Classic vowel-quadrilateral orientation: high F2/front is left, low F2/back is right; low F1/high is top, high F1/low is bottom.
+ const X=x=>70+(xmax-x)/(xmax-xmin)*(W-120),Y=y=>45+(y-ymin)/(ymax-ymin)*(H-105);
  g.font="12px system-ui";g.strokeStyle="#20324a";g.fillStyle="#91a4c0";
- for(let k=0;k<=5;k++){const xx=xmin+(xmax-xmin)*k/5,yy=ymin+(ymax-ymin)*k/5;g.beginPath();g.moveTo(X(xx),45);g.lineTo(X(xx),H-60);g.stroke();g.fillText(Math.round(xx),X(xx)-15,H-35);g.beginPath();g.moveTo(70,Y(yy));g.lineTo(W-40,Y(yy));g.stroke();g.fillText(Math.round(yy),18,Y(yy)+4);}
- if(p){g.beginPath();p.forEach(function(q,i){i?g.lineTo(X(q.f2),Y(q.f1)):g.moveTo(X(q.f2),Y(q.f1));});g.closePath();g.fillStyle="rgba(103,232,249,.13)";g.fill();g.strokeStyle="#67e8f9";g.lineWidth=4;g.stroke();}
+ for(let k=0;k<=5;k++){const xx=xmin+(xmax-xmin)*k/5,yy=ymin+(ymax-ymin)*k/5;g.beginPath();g.moveTo(X(xx),45);g.lineTo(X(xx),H-60);g.stroke();g.fillText(Math.round(xx),X(xx)-18,H-35);g.beginPath();g.moveTo(70,Y(yy));g.lineTo(W-50,Y(yy));g.stroke();g.fillText(Math.round(yy),18,Y(yy)+4);}
+ if(p){
+   // Draw the perimeter in the visually correct quadrilateral order; this is the reverse of the calculation order and gives the same polygon/area.
+   const perimeterKeys=["i","u","a","ae"];
+   const poly=perimeterKeys.map(function(k){return p.find(function(q){return q.key===k;});});
+   g.beginPath();poly.forEach(function(q,i){i?g.lineTo(X(q.f2),Y(q.f1)):g.moveTo(X(q.f2),Y(q.f1));});g.closePath();
+   g.fillStyle="rgba(103,232,249,.13)";g.fill();g.strokeStyle="#67e8f9";g.lineWidth=4;g.stroke();
+ }
  valid.forEach(function(q){const x=X(q.f2),y=Y(q.f1);g.beginPath();g.arc(x,y,q.corner?7:5,0,Math.PI*2);g.fillStyle=q.corner?"#a78bfa":"#91a4c0";g.fill();g.fillStyle="#edf5ff";g.font="bold 14px system-ui";g.fillText(q.label,x+10,y-9);});
- g.fillStyle="#edf5ff";g.font="bold 14px system-ui";g.fillText("F2 (Hz)",W/2-25,H-12);g.save();g.translate(17,H/2+25);g.rotate(-Math.PI/2);g.fillText("F1 (Hz)",0,0);g.restore();
+ g.fillStyle="#edf5ff";g.font="bold 14px system-ui";g.fillText("F2 (Hz)  ← front / high F2        back / low F2 →",W/2-165,H-12);
+ g.save();g.translate(17,H/2+25);g.rotate(-Math.PI/2);g.fillText("F1 (Hz)",0,0);g.restore();
+ g.font="bold 13px system-ui";g.fillStyle="#91a4c0";g.fillText("HIGH",W-92,34);g.fillText("LOW",W-92,H-70);g.fillText("FRONT",82,34);g.fillText("BACK",W-115,34);
 }
 function clearAll(){VOWELS.forEach(function(v){document.getElementById(v.key+"_f1").value="";document.getElementById(v.key+"_f2").value="";});document.getElementById("pasteBox").value="";document.getElementById("importStatus").textContent="";analyze(false);}
 function fillExample(){
