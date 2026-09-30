@@ -42,11 +42,11 @@ input,textarea{width:100%;background:#07111f;color:var(--text);border:1px solid 
 
 <section class="card"><h2>2. Automatic results</h2><div class="results" id="results"></div><div class="eq" id="equation">Enter the four corner-vowel F1/F2 pairs to generate the exact VSA equation.</div></section>
 
-<section class="card"><h2>3. Quadrilateral vowel graph</h2><div class="note">F2 is horizontal and F1 is vertical. VSA uses only the four corner vowels /iː/, /æ/, /ɑː/ and /uː/. The polygon is formed in the fixed order /iː/ → /æ/ → /ɑː/ → /uː/. The other six vowels are shown only as additional acoustic points and are not included in VSA.</div><div class="graphwrap"><canvas id="plot" class="plot" width="1000" height="650"></canvas><div class="legend"><span><b>●</b> Corner vowels /iː æ ɑː uː/ = VSA polygon</span><span>● Other vowels = acoustic points</span></div></div></section>
+<section class="card"><h2>3. Quadrilateral vowel graph</h2><div class="note">F2 is horizontal and F1 is vertical. VSA uses only the four corner vowels /iː/, /æ/, /ɑː/ and /uː/. The polygon is formed in the fixed order /iː/ → /æ/ → /ʊ/ → /ɑː/. The other six vowels are shown only as additional acoustic points and are not included in VSA.</div><div class="graphwrap"><canvas id="plot" class="plot" width="1000" height="650"></canvas><div class="legend"><span><b>●</b> Corner vowels /iː æ ʊ ɑː/ = VSA polygon</span><span>● Other vowels = acoustic points</span></div></div></section>
 
 <section class="card"><h2>4. Quadrilateral data</h2><div id="tableWrap" class="note">Results will appear here after the four corner vowels are entered.</div></section>
 
-<section class="card"><h2>5. Method</h2><div class="note"><b>VSA:</b> ½ × |Σ(F2ᵢ×F1ᵢ₊₁ − F1ᵢ×F2ᵢ₊₁)|, using only the four corner vowels /iː/ → /æ/ → /ɑː/ → /uː/. Area is reported in Hz². This tool is an analysis aid and should be checked against the approved research protocol before thesis/publication use.</div></section>
+<section class="card"><h2>5. Method</h2><div class="note"><b>VSA:</b> ½ × |Σ(F2ᵢ×F1ᵢ₊₁ − F1ᵢ×F2ᵢ₊₁)|, using only the four corner vowels /iː/ → /æ/ → /ʊ/ → /ɑː/. Area is reported in Hz². This tool is an analysis aid and should be checked against the approved research protocol before thesis/publication use.</div></section>
 </main>
 <script>
 (function(){
@@ -58,12 +58,12 @@ const VOWELS=[
  {key:"ae",label:"/æ/",corner:true},
  {key:"v",label:"/ʌ/",corner:false},
  {key:"a",label:"/ɑː/",corner:true},
- {key:"U",label:"/ʊ/",corner:false},
- {key:"u",label:"/uː/",corner:true},
+ {key:"U",label:"/ʊ/",corner:true},
+ {key:"u",label:"/uː/",corner:false},
  {key:"o",label:"/ɔː/",corner:false},
  {key:"r",label:"/ɜː/",corner:false}
 ];
-const CORNER_KEYS=["i","ae","a","u"];
+const CORNER_KEYS=["i","ae","U","a"];
 const rowHost=document.getElementById("vowelRows");
 
 VOWELS.forEach(function(v,index){
@@ -92,9 +92,9 @@ function analyzeLive(){analyze(true);}
 function analyze(live){
  const points=allPoints(),p=cornerPoints(),results=document.getElementById("results"),eq=document.getElementById("equation"),tw=document.getElementById("tableWrap");
  if(!p){
-   results.innerHTML='<div class="metric"><small>VSA</small><strong>Waiting</strong><span class="note">Enter F1 and F2 for /iː/, /æ/, /ɑː/ and /uː/.</span></div>';
+   results.innerHTML='<div class="metric"><small>VSA</small><strong>Waiting</strong><span class="note">Enter F1 and F2 for /iː/, /æ/, /ʊ/ and /ɑː/.</span></div>';
    eq.textContent="Enter the four corner-vowel F1/F2 pairs to generate the exact VSA equation.";
-   tw.textContent="The four corner vowels are /iː/, /æ/, /ɑː/ and /uː/.";
+   tw.textContent="The four corner vowels are /iː/, /æ/, /ʊ/ and /ɑː/.";
    draw(points,null);if(!live)setStatus("Enter F1/F2 values. The graph will update automatically.");return;
  }
  const A=area(p),C=centroid(p),P=perimeter(p),F=fcr(p);
