@@ -28,7 +28,7 @@ input,textarea{width:100%;background:#07111f;color:var(--text);border:1px solid 
 <div class="privacy"><span class="pill">4 vowels</span><span class="pill">F1 + F2 only</span><span class="pill">★ = VSA corner vowel</span><span class="pill">Browser-side calculation</span></div>
 <div class="datahead"><div>#</div><div>Vowel</div><div>F1 (Hz)</div><div>F2 (Hz)</div></div>
 <div id="vowelRows"></div>
-<div class="actions"><button id="analyzeBtn" type="button">Analyze vowel space</button><button class="secondary" id="clearBtn" type="button">Clear</button><button class="secondary" id="exampleBtn" type="button">Load Bhavya example</button></div>
+<div class="actions"><button id="analyzeBtn" type="button">Analyze vowel space</button><button class="secondary" id="clearBtn" type="button">Clear</button></div>
 <div id="status" class="status"></div>
 
 </section>
@@ -112,11 +112,6 @@ function draw(points,p){
  g.font="bold 13px system-ui";g.fillStyle="#91a4c0";g.fillText("HIGH",W-92,34);g.fillText("LOW",W-92,H-70);g.fillText("FRONT",82,34);g.fillText("BACK",W-115,34);
 }
 function clearAll(){VOWELS.forEach(function(v){document.getElementById(v.key+"_f1").value="";document.getElementById(v.key+"_f2").value="";});document.getElementById("pasteBox").value="";document.getElementById("importStatus").textContent="";analyze(false);}
-function fillExample(){
- const d=[[310,1981],[773,1224],[695,1449],[715,1180]];
- VOWELS.forEach(function(v,i){document.getElementById(v.key+"_f1").value=d[i][0];document.getElementById(v.key+"_f2").value=d[i][1];});
- analyze(false);
-}
 function importRow(){
  const raw=document.getElementById("pasteBox").value.trim(),s=document.getElementById("importStatus");if(!raw){s.textContent="Paste a complete row first.";s.className="status warning";return;}
  const line=raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).find(x=>x.split(/\t|\|/).length>=35);if(!line){s.textContent="Complete row not detected. Expected 35 columns.";s.className="status warning";return;}
@@ -126,7 +121,6 @@ function importRow(){
 }
 document.getElementById("analyzeBtn").addEventListener("click",function(){analyze(false);});
 document.getElementById("clearBtn").addEventListener("click",clearAll);
-document.getElementById("exampleBtn").addEventListener("click",fillExample);
 document.getElementById("importBtn").addEventListener("click",importRow);
 analyze(false);
 })();
