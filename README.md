@@ -1,34 +1,81 @@
 # Vowel Space Area Analyzer
 
-Browser-based research tool for acoustic vowel analysis using F1/F2 measurements.
+Browser-based F1/F2 acoustic vowel-space analysis tool for research and educational workflows.
 
-## Primary VSA protocol
-The primary quadrilateral VSA uses the same four corner vowels in every context:
-- /iː/ — high front
-- /æ/ — low front
-- /ɑː/ — low back
-- /uː/ — high back
+## What you enter
 
-Contexts:
-1. Isolated words
-2. Carrier phrase
-3. Proposed sentences
+The intended workflow is simple:
 
-## Features
-- Participant ID and proficiency group
-- F1/F2 entry for all four corner vowels
-- Separate VSA for each context
-- Identical quadrilateral/shoelace calculation across contexts
-- Substituted equation display
-- F1–F2 vowel-space plots
-- Centroid calculation
+**Paste a participant row from Excel/Google Sheets → Import → inspect the automatic quadrilateral vowel graph and VSA.**
+
+The analyzer accepts the research-table structure:
+
+1. Sl. no
+2. Name
+3. Gender
+4. LEAP score
+5. Proficiency
+6. Ten vowel groups, each containing **F1, F2, VD**
+
+The application uses **F1 and F2 only**. VD and the preceding metadata are ignored for VSA calculation.
+
+## Vowel order
+
+The 10-vowel order is:
+
+1. /iː/
+2. /ɪ/
+3. /ɛ/
+4. /æ/
+5. /ʌ/
+6. /ɑː/
+7. /ɔː/
+8. /ʊ/
+9. /uː/
+10. /ɝ/
+
+## Quadrilateral VSA
+
+VSA automatically uses the four predefined corner vowels in this order:
+
+**/iː/ → /æ/ → /ɑː/ → /uː/**
+
+Formula:
+
+`VSA = 1/2 | Σ(F2ᵢ × F1ᵢ₊₁ − F1ᵢ × F2ᵢ₊₁) |`
+
+Area is reported in **Hz²**.
+
+The graph uses F2 on the horizontal axis and F1 on the vertical axis. The four corner vowels form the quadrilateral; the remaining six vowels are plotted as additional acoustic points.
+
+## Automatic outputs
+
+- Quadrilateral VSA
+- Substituted shoelace equation
+- F1–F2 quadrilateral graph
+- All supplied vowel points
+- Centroid
+- Perimeter
+- FCR
+- Context-wise comparison
 - CSV export
-- Example dataset
 
-## Formula
-A = 1/2 | Σ(F2_i × F1_i+1 − F1_i × F2_i+1) |
+## Contexts
 
-Area is reported in Hz².
+The interface supports:
 
-## Research note
-The vowel set and ordering should match the approved study protocol. This tool is intended for educational/research use and is not validated diagnostic software.
+- Isolated words
+- Carrier phrase
+- Proposed sentences
+
+The same four-vowel VSA protocol is used in every context.
+
+## Data handling / security
+
+This is a static browser application. Calculations and pasted-data processing happen in the user's browser; the project does not provide a database or application-server upload endpoint.
+
+For research ethics and privacy, use participant IDs or de-identified data where appropriate and follow the approved study protocol. Do not paste unnecessary personally identifying information.
+
+## Important research note
+
+This tool is an analysis aid, not validated diagnostic software. Confirm the vowel order, acoustic measurement procedure, and VSA protocol against the approved research protocol before using results in a thesis, paper, or clinical report.
